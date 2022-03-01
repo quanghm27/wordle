@@ -1,10 +1,12 @@
 <template>
-  <div class="tile tile--empty"></div>
+  <div class="tile tile--empty">
+  <slot></slot>
+  </div>
 </template>
 
 <script>
 export default {
-  name: "Tile"
+  name: "Tile",
 }
 </script>
 
@@ -23,9 +25,6 @@ export default {
   color: #2c3e50;
   text-transform: uppercase;
   user-select: none;
-}
-
-.tile--empty {
-  @apply border-2 border-gray-300
+  border: 2px solid #c3c3c3;
 }
 </style>

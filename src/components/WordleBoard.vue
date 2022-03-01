@@ -1,12 +1,13 @@
 <template>
   <div class="board-wrapper">
     <div class="board-tile-area">
-      <div class="tile-row" v-for="row in maxGuess">
-        <tile />
-        <tile />
-        <tile />
-        <tile />
-        <tile />
+      <div class="tile-row" v-for="word in records">
+        <Tile v-for="(item,index) in word"
+          :class="item.status"
+          :key="index"
+        >
+          {{ item.letter }}
+        </Tile>
       </div>
     </div>
   </div>
@@ -16,8 +17,12 @@
 import Tile from "./Tile.vue";
 export default {
   name: "WordleBoard",
-  components: {Tile},
+  components: { Tile },
   props: {
+    records: {
+      type: Array,
+      default: () => []
+    },
     maxGuess: {
       type: Number,
       default: 6
