@@ -1,6 +1,6 @@
 <template>
   <!-- <p class="font-bold text-3xl">{{ guessWord.map(x => x.letter).join('') }}</p> -->
-  <div class="keyboard-wrapper">
+  <div class="keyboard-wrapper" ref="$keyboard">
     <div class="flex"
       v-for="{row, value: buttons} in rows"
       :class="{ 'mb-1' : row !== 'thirdRow' }"
@@ -44,7 +44,7 @@
 
 <script setup>
 import KeyboardButton from "./KeyboardButton.vue";
-import { computed, onMounted, onUnmounted, toRefs } from 'vue'
+import { computed, onMounted, onUnmounted, toRefs, ref } from 'vue'
 import { GUESS_WORD_LENGTH, checkWord, guess, WordBankException } from "../game/index"
 
 const props = defineProps({
@@ -55,6 +55,7 @@ const props = defineProps({
 })
 const { guessWord } = toRefs(props)
 const emit = defineEmits(['update:guessWord', 'enter'])
+const $keyboard = ref(null)
 
 const firstRow = 'qwertyuiop'.split('')
 const secondRow = 'asdfghjkl'.split('')
@@ -122,11 +123,13 @@ function getStatus(letter) {
 
 // Handle enter by keyboard
 onMounted(() => {
+  // $keyboard.value.addEventListener('keydown', onkeydown)
   window.addEventListener('keydown', onkeydown)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('keydown', onkeydown)
+  window.addEventListener('keydown', onkeydown)
+  // $keyboard.value.removeEventListener('keydown', onkeydown)
 })
 
 function onkeydown(event) {

@@ -9,60 +9,52 @@ class WordToken {
     }
 }
 
-class WordLengthException {
-    constructor(message) {
-        this.message = message
-    }
-}
-
 class WordBankException {
     constructor(message) {
         this.message = message
     }
 }
 
-function validateChallengeWord() {
+function isChallengeMode() {
+    const params = document.location.search
+    return params.includes('?challenge=')
+}
+
+function getChallenge() {
     // Friend challenge
-    let query = window.location.search
-    if (query) {
-        query =  query.slice(1)
+    const params = new URLSearchParams(document.location.search)
+    const challenge = params.get('challenge')
+    if (challenge) {
         try {
-            const wordToday = window.atob(query)
-            if (wordToday.length !== GUESS_WORD_LENGTH) { //FIXME: will add feature choose word length
-                throw(new WordLengthException('Challenge word incorrect length (must be 5 characters)'))
-            }
-            return true
+            const challengeDecoded = JSON.parse(atob(challenge))
+            return challengeDecoded
         } catch(e) {
-            if (typeof e === WordLengthException) {
-                alert(e)
-                return false
-            }
-            alert ('Challenge word incorrect encode')
+            console.error(e)
+            alert('Challenge incorrect encode')
         }
     }
+    return null
+}
+
+function validateChallengeWord() {
+    const word = getChallengeWord()
+    if (!word) {
+        return false
+    } else if (word && word.length !== GUESS_WORD_LENGTH) { //FIXME: will add feature choose word length
+        return false
+        // throw(new WordBankException('Challenge word incorrect length (must be 5 characters)'))
+    }
+    return true
 }
 
 function getChallengeWord() {
-    // Friend challenge
-    let query = window.location.search
-    if (query) {
-        query =  query.slice(1)
-        try {
-            const wordToday = window.atob(query)
-            if (wordToday.length !== GUESS_WORD_LENGTH) { //FIXME: will add feature choose word length
-                throw(new WordLengthException('Challenge word incorrect length (must be 5 characters)'))
-            }
-            return wordToday
-        } catch(e) {
-            if (typeof e === WordLengthException) {
-                alert(e)
-                return ''
-            }
-            alert ('Challenge word incorrect encode')
-        }
-    }
+    const { word } = getChallenge() || {}
+    return word
+}
 
-    return null
+function getHint() {
+    const { hint } = getChallenge() || {}
+    return hint
 }
 
 function getWordToday() {
@@ -73,7 +65,7 @@ function getWordToday() {
 }
 
 function getAnswer() {
-    const challengeWord = getChallengeWord()
+    const challengeWord = validateChallengeWord() && getChallengeWord()
     const wordToday = getWordToday()
 
     return challengeWord || wordToday
@@ -85,11 +77,12 @@ function checkWord(guessWord) {
         return
     }
 
-    if (allWords.indexOf(guessWord) === -1) { //FIXME: will add feature choose word length
+    if (!validateChallengeWord() && allWords.indexOf(guessWord) === -1) { //FIXME: will add feature choose word length
         throw(new WordBankException('Not exist in word list'))
     }
 
     let answer = getAnswer()
+    // console.log('answer', answer)
     const guessWordTokens = guessWord.split('')
 
     // Perfect case: match all letters
@@ -118,4 +111,4 @@ function guess(letter) {
     return new WordToken(letter, 'init')
 }
 
-export { GUESS_WORD_LENGTH, checkWord, guess, WordBankException}
+export { GUESS_WORD_LENGTH, checkWord, guess, validateChallengeWord, isChallengeMode, getHint, WordBankException}
