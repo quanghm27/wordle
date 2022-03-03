@@ -1,6 +1,6 @@
 <template>
     <div class="fixed inset-0 bg-gray-300 bg-opacity-80 overflow-y-auto h-full w-full">
-        <div class="flex flex-col w-full lg:w-1/3 mx-auto h-1/2 px-2 absolute bottom-[2px] lg:left-1/3 bg-white shadow-lg">
+        <div class="flex flex-col w-full lg:w-1/3 mx-auto h-1/2 px-2 absolute bottom-[2px] lg:bottom-1/4 lg:left-1/3 bg-white shadow-lg">
             <div class="text-4xl text-center relative">
                 <div>Make challenge</div>
                 <div class="absolute right-0 top-1/4 cursor-pointer" @click="$emit('close')">
@@ -9,19 +9,19 @@
                     </svg>
                 </div>
             </div>
-            <div class="flex flex-col text-3xl m-5">
-                <div class="mb-2">Word*:</div>
+            <div class="flex flex-col text-3xl my-5 mx-20">
+                <div class="mb-1">Word*:</div>
                 <div class="mb-5">
                     <input
                         v-model="word"
                         placeholder="(Give extract 5 characters)"
                         maxlength="5"
-                        class="w-3/4 text-2xl px-2 border border-gray-300"
+                        class="w-full text-2xl px-2 border border-gray-300"
                     />
                 </div>
-                <div class="mb-2">Hint (optional):</div>
+                <div class="mb-1">Hint (optional):</div>
                 <div class="mb-5">
-                    <input v-model="hint" class="w-3/4 text-2xl px-2 border border-gray-300" />
+                    <input v-model="hint" class="w-full text-2xl px-2 border border-gray-300" />
                 </div>
             </div>
             <div class="text-center">
@@ -33,18 +33,15 @@
 
 <script setup>
 import { ref } from 'vue';
+import { createChallenge } from '../game/index'
 
 const word = ref('')
 const hint = ref('')
 
-function makeChallenge() {
-    const challenge = JSON.stringify({ word: word.value, hint: hint.value })
-    return btoa(challenge)
-}
-
 async function handleSubmit() {
     const { origin, pathname } = window.location
-    const challengeEncode = makeChallenge()
+    const jsonString = JSON.stringify({ word: word.value, hint: hint.value })
+    const challengeEncode = createChallenge(jsonString)
     const content = `${origin}${pathname}?challenge=${challengeEncode}`
 
     const result = await navigator.permissions.query({name: "clipboard-write"})

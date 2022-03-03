@@ -1,10 +1,10 @@
-#!/usr/bin/env sh
+#!/usr/bin/sh
 
 # abort on errors
 set -e
 
 # build
-npm run build
+yarn build
 
 # navigate into the build output directory
 cd dist

@@ -9,8 +9,7 @@
 
 .correct,
 .present,
-.absent,
-.init {
+.absent {
   color: #fff !important;
   border: none !important;
 }
@@ -28,5 +27,5 @@
 }
 
 .init {
-  @apply bg-gray-400
+  border: 2px solid #464646 !important;
 }

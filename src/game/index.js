@@ -1,4 +1,5 @@
 import { meaningWords, allWords } from './wordbank' 
+import { encode, decode } from '../utils'
 
 const GUESS_WORD_LENGTH = 5 //FIXME: will add feature choose word length
 
@@ -15,25 +16,32 @@ class WordBankException {
     }
 }
 
-function isChallengeMode() {
+export function isChallengeMode() {
     const params = document.location.search
-    return params.includes('?challenge=')
+    return params.includes('?challenge=') && validateChallengeWord()
 }
 
 function getChallenge() {
     // Friend challenge
-    const params = new URLSearchParams(document.location.search)
-    const challenge = params.get('challenge')
+    let challenge = document.location.search
+    challenge = challenge.replace('?challenge=', '')
+    const key = getWordToday()
     if (challenge) {
         try {
-            const challengeDecoded = JSON.parse(atob(challenge))
-            return challengeDecoded
+            const jsonString = decode(key, challenge)
+            return JSON.parse(jsonString)
         } catch(e) {
             console.error(e)
             alert('Challenge incorrect encode')
         }
     }
     return null
+}
+
+export function createChallenge(jsonString) {
+    const key = getWordToday()
+    const challengeEncode = encode(key, jsonString)
+    return challengeEncode
 }
 
 function validateChallengeWord() {
@@ -52,7 +60,7 @@ function getChallengeWord() {
     return word
 }
 
-function getHint() {
+export function getHint() {
     const { hint } = getChallenge() || {}
     return hint
 }
@@ -71,10 +79,9 @@ function getAnswer() {
     return challengeWord || wordToday
 }
 
-function checkWord(guessWord) {
+export function checkWord(guessWord) {
     if (guessWord.length !== GUESS_WORD_LENGTH) { //FIXME: will add feature choose word length
-        alert('incorrect word length')
-        return
+        throw(new WordBankException('incorrect word length'))
     }
 
     if (!validateChallengeWord() && allWords.indexOf(guessWord) === -1) { //FIXME: will add feature choose word length
@@ -107,8 +114,8 @@ function checkWord(guessWord) {
     })
 }
 
-function guess(letter) {
+export function guess(letter) {
     return new WordToken(letter, 'init')
 }
 
-export { GUESS_WORD_LENGTH, checkWord, guess, validateChallengeWord, isChallengeMode, getHint, WordBankException}
+export { GUESS_WORD_LENGTH, WordBankException }

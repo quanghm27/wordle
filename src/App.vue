@@ -4,22 +4,16 @@ import WordleBoard from "./components/WordleBoard.vue";
 import WordleKeyboard from "./components/WordleKeyboard.vue";
 import WordleChallengeModal from "./components/WordleChallengeModal.vue"
 import { ref, onBeforeMount } from 'vue'
-import { validateChallengeWord, WordBankException, getHint, isChallengeMode } from "./game";
+import { getHint, isChallengeMode } from "./game";
 
 onBeforeMount(() => {
   if (isChallengeMode()) {
-    const challenge = validateChallengeWord()
-    console.log('Challenge mode: ', challenge)
-    if (challenge) {
-      const hint = ref('')
-      hint.value = getHint()
-    } else {
-      alert('Wrong word encoded, switch "Challenge Word" to "Daily word".')
-    }
+    hint.value = getHint()
   }
 })
 
 const word = ref([])
+const hint = ref('')
 const guessCount = ref(0)
 const records = ref(Array.from({ length: 6 }, () => //FIXME: add feature custom wordlength and guess time
   Array.from({ length: 5 }, () => ({
@@ -55,6 +49,9 @@ function handleGuessing(event) {
   <wordle-header @make-challenge="showChallengeModal = true" />
   <div class="app-wrapper flex flex-col justify-between">
     <wordle-board :records="records" />
+    <div v-if="hint" class="text-center text-3xl mb-3">Hint for you:
+      {{ `"${hint}"` }}
+    </div>
     <wordle-keyboard
       v-model:guessWord="word"
       @update:guessWord="handleTypingLetter" 
