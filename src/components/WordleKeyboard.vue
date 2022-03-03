@@ -12,7 +12,6 @@
           v-if="btnLetter === 'enter'"
           class="bigger"
           @click="submitWord"
-          :disabled="disabledEnter"
           :key="index"
         >
           {{ btnLetter }}
@@ -20,7 +19,6 @@
         <KeyboardButton
           v-else-if="btnLetter !== 'enter' && btnLetter !== 'undo'"
           :class="getStatus(btnLetter)"
-          :disabled="disabledButton"
           @click="typing(btnLetter)"
           :key="btnLetter"
         >
@@ -29,7 +27,6 @@
         <KeyboardButton
           v-else
           class="bigger"
-          :disabled="disabledUndo"
           @click="undo"
         >
           <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24">
