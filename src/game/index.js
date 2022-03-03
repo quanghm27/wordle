@@ -103,7 +103,7 @@ export function checkWord(guessWord) {
     return guessWordTokens.map((letter, index) => {
         const indexInAnswer = answer.indexOf(letter)
         if (indexInAnswer === index) {
-            answer = answer.substring(0, indexInAnswer) + answer.substring(indexInAnswer + 1)
+            answer = answer.substring(0, indexInAnswer) + '-' + answer.substring(indexInAnswer + 1)
             return new WordToken(letter, 'correct')
         } else if (indexInAnswer > -1) {
             answer = answer.substring(0, indexInAnswer) + answer.substring(indexInAnswer + 1)
