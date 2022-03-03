@@ -61,7 +61,7 @@ function validateChallenge() {
     if (!word.value.length || word.value.length !== GUESS_WORD_LENGTH) {
         showErr.value = true
         return true
-    } else if (/A-Za-z/.test(word.value)) {
+    } else if (!/^[A-Za-z]+$/.test(word.value)) {
         showErr.value = true
     }
 
