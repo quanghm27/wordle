@@ -114,6 +114,13 @@ export function checkWord(guessWord) {
     })
 }
 
+export function createUrlForShare(word, hint) {
+    const { origin, pathname } = window.location
+    const jsonString = JSON.stringify({ word, hint })
+    const challengeEncode = createChallenge(jsonString)
+    return `${origin}${pathname}?challenge=${challengeEncode}`
+}
+
 export function guess(letter) {
     return new WordToken(letter, 'init')
 }
