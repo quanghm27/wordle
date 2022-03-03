@@ -115,6 +115,9 @@ export function checkWord(guessWord) {
 }
 
 export function createUrlForShare(word, hint) {
+    word = word.toLocaleLowerCase()
+    hint = hint.toLocaleLowerCase()
+
     const { origin, pathname } = window.location
     const jsonString = JSON.stringify({ word, hint })
     const challengeEncode = createChallenge(jsonString)
