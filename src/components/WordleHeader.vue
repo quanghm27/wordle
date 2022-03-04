@@ -5,7 +5,7 @@
       <!-- <img src="https://www.svgrepo.com/show/163735/man-thinking.svg" intrinsicsize="512 x 512" width="180" height="180" srcset="https://www.svgrepo.com/show/163735/man-thinking.svg 4x" alt="Man Thinking SVG Vector" title="Man Thinking SVG Vector"> -->
     </div>
     <div class="text-3xl text-center" v-if="isChallengeMode()">
-      Wordle (friend challenge)
+      Wordle (Friends challenge)
     </div>
     <div class="text-5xl" v-else>
       Wordle

@@ -1,6 +1,6 @@
 <template>
   <!-- <p class="font-bold text-3xl">{{ guessWord.map(x => x.letter).join('') }}</p> -->
-  <div class="keyboard-wrapper" ref="$keyboard">
+  <div class="keyboard-wrapper">
     <div class="flex"
       v-for="{row, value: buttons} in rows"
       :class="{ 'mb-1' : row !== 'thirdRow' }"
@@ -18,7 +18,7 @@
         </KeyboardButton>
         <KeyboardButton
           v-else-if="btnLetter !== 'enter' && btnLetter !== 'undo'"
-          :class="getStatus(btnLetter)"
+          :class="keyboardStates.get(btnLetter)"
           @click="typing(btnLetter)"
           :key="btnLetter"
         >
@@ -52,7 +52,7 @@ const props = defineProps({
 })
 const { guessWord } = toRefs(props)
 const emit = defineEmits(['update:guessWord', 'enter'])
-const $keyboard = ref(null)
+const keyboardStates = ref(new Map())
 
 const firstRow = 'qwertyuiop'.split('')
 const secondRow = 'asdfghjkl'.split('')
@@ -77,15 +77,28 @@ function submitWord() {
     const guessWordString = guessWord.value.map(x => x.letter).join('')
     const result = checkWord(guessWordString.toLowerCase())
 
-    letterPool.forEach(item => {
-      const storedLetter = result.find(x => x.letter === item.letter)
-      if (storedLetter) item.status = storedLetter.status
+    result.forEach(item => {
+      evaluateKeyboardState(item.letter, item.status)
     })
     emit('enter', result)
   } catch (e) {
     if (e instanceof WordBankException) {
       alert(e.message)
     }
+  }
+}
+
+function evaluateKeyboardState(letter, status) {
+  const currentState = keyboardStates.value.get(letter)
+
+  const letterStateNew = currentState === 'init'
+  const letterStateAbsent = currentState === 'absent'
+  const letterStatePresent = currentState === 'present'
+
+  if ( letterStateNew ||
+       letterStateAbsent ||
+      (letterStatePresent && status === 'correct')) {
+    keyboardStates.value.set(letter, status)
   }
 }
 
@@ -96,37 +109,52 @@ const disabledUndo = computed(() => {
 
 function undo() {
   if (disabledUndo.value) return
-  guessWord.value.pop()
-  if (letterPool.find(x => x.status === 'init')) letterPool.pop()
+  const token = guessWord.value.pop()
+  undoKeyboardState(token.letter)
   emit('update:guessWord', guessWord.value)
+}
+
+
+function undoKeyboardState(letter) {
+  const exist = guessWord.value.find( x => x.letter === letter)
+  const currentState = keyboardStates.value.get(letter)
+  if (!exist && currentState === 'init') {
+    keyboardStates.value.delete(letter)
+  }
 }
 
 // Letter Buttons 
 const disabledButton = computed(() => {
   return guessWord.value.length === GUESS_WORD_LENGTH
 })
+
 function typing(letter) {
   if (disabledButton.value) return
-  if (letterPool.findIndex(x => x.letter === letter) === -1) letterPool.push(guess(letter))
-  guessWord.value.push(guess(letter))
+  const token = guess(letter)
+
+  guessWord.value.push(token)
+  setLetterState(letter, token.status)
   emit('update:guessWord', guessWord.value)
 }
 
-function getStatus(letter) {
-  // console.log(letterPool)
-  const item = letterPool.find(x => x.letter === letter)
-  return item?.status
+function setLetterState(letter, status) {
+  if (isNewLetter(letter)) {
+    keyboardStates.value.set(letter, status)
+  }
+}
+
+// Check this letter evaluated or not
+function isNewLetter(letter) {
+  return !keyboardStates.value.get(letter)
 }
 
 // Handle enter by keyboard
 onMounted(() => {
-  // $keyboard.value.addEventListener('keydown', onkeydown)
   window.addEventListener('keydown', onkeydown)
 })
 
 onUnmounted(() => {
-  window.addEventListener('keydown', onkeydown)
-  // $keyboard.value.removeEventListener('keydown', onkeydown)
+  window.removeEventListener('keydown', onkeydown)
 })
 
 function onkeydown(event) {

@@ -11,3 +11,20 @@ export function decode(key, text) {
         return String.fromCharCode(code);
     });
 }
+
+export function makeKeyFrom(string) {
+    if (isNumeric(string)) {
+        return string
+    }
+    return alphaToNumber(string)
+}
+
+function isNumeric(value) {
+    return /^-?\d+$/.test(value);
+}
+
+function alphaToNumber(string) {
+    return string.split('')
+                .map(str => str.charCodeAt(0) - 65)
+                .join('')
+}

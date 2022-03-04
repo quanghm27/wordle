@@ -1,5 +1,5 @@
 <template>
-  <button class="h-14 bg-gray-200 text-2xl rounded flex-1 mr-1 flex items-center justify-center">
+  <button class="h-14 bg-gray-200 text-2xl rounded flex-1 mr-1 flex items-center justify-center box-border">
     <slot></slot>
   </button>
 </template>

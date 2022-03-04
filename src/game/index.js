@@ -1,5 +1,5 @@
 import { meaningWords, allWords } from './wordbank' 
-import { encode, decode } from '../utils'
+import { encode, decode, makeKeyFrom } from '../utils'
 
 const GUESS_WORD_LENGTH = 5 //FIXME: will add feature choose word length
 
@@ -25,10 +25,10 @@ function getChallenge() {
     // Friend challenge
     let challenge = document.location.search
     challenge = challenge.replace('?challenge=', '')
-    const key = getWordToday()
+    const wordToday = getWordToday()
     if (challenge) {
         try {
-            const jsonString = decode(key, challenge)
+            const jsonString = decode(makeKeyFrom(wordToday), challenge)
             return JSON.parse(jsonString)
         } catch(e) {
             console.error(e)
@@ -39,8 +39,8 @@ function getChallenge() {
 }
 
 export function createChallenge(jsonString) {
-    const key = getWordToday()
-    const challengeEncode = encode(key, jsonString)
+    const wordToday = getWordToday()
+    const challengeEncode = encode(makeKeyFrom(wordToday), jsonString)
     return challengeEncode
 }
 
@@ -106,7 +106,7 @@ export function checkWord(guessWord) {
             answer = answer.substring(0, indexInAnswer) + '-' + answer.substring(indexInAnswer + 1)
             return new WordToken(letter, 'correct')
         } else if (indexInAnswer > -1) {
-            answer = answer.substring(0, indexInAnswer) + answer.substring(indexInAnswer + 1)
+            answer = answer.substring(0, indexInAnswer) + '-' + answer.substring(indexInAnswer + 1)
             return new WordToken(letter, 'present')
         } else {
             return new WordToken(letter, 'absent')
