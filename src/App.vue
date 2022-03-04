@@ -22,6 +22,7 @@ const records = ref(Array.from({ length: 6 }, () => //FIXME: add feature custom 
   }))
 ))
 const showChallengeModal = ref(false)
+const vituralKeyboard = ref(true)
 
 function handleTypingLetter(word) {
   const newWord = [...word]
@@ -38,15 +39,24 @@ function handleGuessing(event) {
   word.value = []
 }
 
+function showModal() {
+  showChallengeModal.value = true
+  vituralKeyboard.value = false
+}
+
+function closeModal() {
+  showChallengeModal.value = false
+  vituralKeyboard.value = true
+}
 </script>
 
 <template>
   <wordle-challenge-modal
-    v-if="showChallengeModal"
-    @close="showChallengeModal = false"
+    v-show="showChallengeModal"
+    @close="closeModal"
   >
   </wordle-challenge-modal>
-  <wordle-header @make-challenge="showChallengeModal = true" />
+  <wordle-header @make-challenge="showModal" />
   <div class="app-wrapper flex flex-col justify-between">
     <wordle-board :records="records" />
     <div v-if="hint" class="text-center text-3xl mb-3">Hint for you:
@@ -54,6 +64,7 @@ function handleGuessing(event) {
     </div>
     <wordle-keyboard
       v-model:guessWord="word"
+      :vituralKeyboard="vituralKeyboard"
       @update:guessWord="handleTypingLetter" 
       @enter="handleGuessing"
     />

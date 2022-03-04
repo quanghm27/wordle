@@ -41,16 +41,20 @@
 
 <script setup>
 import KeyboardButton from "./KeyboardButton.vue";
-import { computed, onMounted, onUnmounted, toRefs, ref } from 'vue'
+import { computed, watch, toRefs, ref, onMounted } from 'vue'
 import { GUESS_WORD_LENGTH, checkWord, guess, WordBankException } from "../game/index"
 
 const props = defineProps({
   guessWord: {
     type: Array,
     default: () => []
+  },
+  vituralKeyboard: {
+    type: Boolean,
+    default: true
   }
 })
-const { guessWord } = toRefs(props)
+const { guessWord, vituralKeyboard } = toRefs(props)
 const emit = defineEmits(['update:guessWord', 'enter'])
 const keyboardStates = ref(new Map())
 
@@ -148,13 +152,19 @@ function isNewLetter(letter) {
   return !keyboardStates.value.get(letter)
 }
 
-// Handle enter by keyboard
+// Regist vitural keyboard
 onMounted(() => {
   window.addEventListener('keydown', onkeydown)
 })
 
-onUnmounted(() => {
-  window.removeEventListener('keydown', onkeydown)
+watch(vituralKeyboard, (turnOn) => {
+  if (turnOn) {
+    console.log('vitural keyboad ON')
+    window.addEventListener('keydown', onkeydown)
+  } else {
+    console.log('vitural keyboard OFF')
+    window.removeEventListener('keydown', onkeydown)
+  }
 })
 
 function onkeydown(event) {

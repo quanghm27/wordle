@@ -76,7 +76,6 @@ async function handleSubmit() {
     const hiddenInput = document.querySelector('#clipboard')
     hiddenInput.setAttribute('type', 'text')
     hiddenInput.value = createUrlForShare(word.value, hint.value)
-    console.log(hiddenInput.value)
     await nextTick()
     hiddenInput.select()
     try {
