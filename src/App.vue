@@ -63,7 +63,7 @@ function closeModal() {
       {{ `"${hint}"` }}
     </div>
     <wordle-keyboard
-      v-model:guessWord="word"
+      :guessWord="word"
       :vituralKeyboard="vituralKeyboard"
       @update:guessWord="handleTypingLetter" 
       @enter="handleGuessing"

@@ -90,28 +90,39 @@ export function checkWord(guessWord) {
 
     let answer = getAnswer()
     // console.log('answer', answer)
-    const guessWordTokens = guessWord.split('')
-
+    
     // Perfect case: match all letters
     if (guessWord === answer) {
-        return guessWordTokens.map(letter => {
+        return guessWord.split('').map(letter => {
             return new WordToken(letter, 'correct')
         })
     }
 
-    // Match some letters
-    return guessWordTokens.map((letter, index) => {
-        const indexInAnswer = answer.indexOf(letter)
-        if (indexInAnswer === index) {
-            answer = answer.substring(0, indexInAnswer) + '-' + answer.substring(indexInAnswer + 1)
-            return new WordToken(letter, 'correct')
-        } else if (indexInAnswer > -1) {
-            answer = answer.substring(0, indexInAnswer) + '-' + answer.substring(indexInAnswer + 1)
-            return new WordToken(letter, 'present')
-        } else {
-            return new WordToken(letter, 'absent')
+    // Initial result array, mark all letter absent.
+    let guessWordTokens = guessWord.split('')
+                                     .map(letter => new WordToken(letter, 'absent'))
+
+    // Mark the correct letters
+    guessWordTokens = guessWordTokens.map((item, index) => {
+        const letterAtIndex = answer.charAt(index)
+        if (letterAtIndex === item.letter) {
+            answer = answer.substring(0, index) + '-' + answer.substring(index + 1)
+            return new WordToken(item.letter, 'correct')
         }
+        return item
     })
+
+    // Mark the presents letters
+    guessWordTokens = guessWordTokens.map((item) => {
+        const indexInAnswer = answer.indexOf(item.letter)
+        if (indexInAnswer > -1 && item.status !== 'correct') {
+            answer = answer.substring(0, indexInAnswer) + '-' + answer.substring(indexInAnswer + 1)
+            return new WordToken(item.letter, 'present')
+        }
+        return item
+    })
+
+    return guessWordTokens
 }
 
 export function createUrlForShare(word, hint) {
