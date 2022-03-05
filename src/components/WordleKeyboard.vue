@@ -72,7 +72,7 @@ const letterPool = []
 
 // Button Enter
 const disabledEnter = computed(() => {
-  return guessWord.value.length !== GUESS_WORD_LENGTH
+  return guessWord.value.length !== GUESS_WORD_LENGTH || !vituralKeyboard.value
 })
 
 function submitWord() {
@@ -108,7 +108,7 @@ function evaluateKeyboardState(letter, status) {
 
 // Button Undo
 const disabledUndo = computed(() => {
-  return guessWord.value.length === 0
+  return guessWord.value.length === 0 || !vituralKeyboard.value
 })
 
 function undo() {
@@ -129,7 +129,7 @@ function undoKeyboardState(letter) {
 
 // Letter Buttons 
 const disabledButton = computed(() => {
-  return guessWord.value.length === GUESS_WORD_LENGTH
+  return guessWord.value.length === GUESS_WORD_LENGTH || !vituralKeyboard.value
 })
 
 function typing(letter) {

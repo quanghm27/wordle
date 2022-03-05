@@ -1,13 +1,13 @@
 <template>
   <div class="header-wrapper">
-    <div @click="$emit('make-challenge')" class="make-challenge">
+    <div @click="$emit('challenge')" class="make-challenge">
       <img class="flip" src="https://www.svgrepo.com/show/404222/thinking-face.svg" intrinsicsize="512 x 512" width="180" height="180" srcset="https://www.svgrepo.com/show/404222/thinking-face.svg 4x" alt="Thinking Face SVG Vector" title="Thinking Face SVG Vector">
       <!-- <img src="https://www.svgrepo.com/show/163735/man-thinking.svg" intrinsicsize="512 x 512" width="180" height="180" srcset="https://www.svgrepo.com/show/163735/man-thinking.svg 4x" alt="Man Thinking SVG Vector" title="Man Thinking SVG Vector"> -->
     </div>
     <div class="text-3xl text-center" v-if="isChallengeMode()">
       Wordle (Friends challenge)
     </div>
-    <div class="text-5xl" v-else>
+    <div class="text-5xl" @click="reload" v-else>
       Wordle
     </div>
     <div @click="$emit('setting')">
@@ -20,7 +20,9 @@
 
 <script setup>
 import { isChallengeMode } from '../game/index'
-
+function reload() {
+  location.reload()
+}
 </script>
 
 <style scoped>
